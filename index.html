@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>TRON 靓地址生成器</title>
+</head>
+<body>
+  <h2>TRON 靓地址生成器</h2>
+
+  <input id="prefix" placeholder="地址前缀，如 ABC" />
+  <button onclick="generate()">生成</button>
+
+  <pre id="result"></pre>
+
+<script>
+let running = false;
+
+function randomHex(len) {
+  const chars = "abcdef0123456789";
+  let s = "";
+  for (let i = 0; i < len; i++) {
+    s += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return s;
+}
+
+function fakeTronAddress() {
+  // TRON 地址一定以 T 开头（演示用）
+  return "T" + randomHex(33);
+}
+
+async function generate() {
+  if (running) return;
+  running = true;
+
+  const prefix = document.getElementById("prefix").value.toUpperCase();
+  const out = document.getElementById("result");
+  out.textContent = "生成中，请稍候...\n";
+
+  let count = 0;
+  while (true) {
+    const addr = fakeTronAddress();
+    count++;
+
+    if (addr.startsWith("T" + prefix)) {
+      out.textContent =
+        "✅ 找到靓地址！\n\n" +
+        "地址: " + addr + "\n" +
+        "尝试次数: " + count;
+      break;
+    }
+
+    if (count % 5000 === 0) {
+      out.textContent = "已尝试 " + count + " 次...";
+      await new Promise(r => setTimeout(r, 0));
+    }
+  }
+
+  running = false;
+}
+</script>
+</body>
+</html>
